@@ -1,1 +1,3 @@
-# Summertime-Sadness
+# Viber
+
+An audio-interactive Processing mini project.
