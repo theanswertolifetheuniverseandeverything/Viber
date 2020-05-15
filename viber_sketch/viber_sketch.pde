@@ -12,21 +12,19 @@ import org.jbox2d.dynamics.contacts.*;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 
-
-
 // Physics
 Box2DProcessing box2d;
 
 ArrayList <Particle> particleList = new <Particle> ArrayList();
 ArrayList <Boundary> boundaryList = new <Boundary> ArrayList();
 
-
 // Audio 
 Minim minim;
 AudioPlayer song;
 FFT fft;
 
-int numAudioBands = 50;
+int numAudioBands = 40;
+boolean attractOn;
 
 void setup() {
   size(600, 600);
@@ -54,14 +52,18 @@ void setup() {
   fft.linAverages(numAudioBands);  //定义音频如何截取分割 这里我们分成10档
 
   for (int i = 0; i < numAudioBands; i++) {
-    particleList.add(new Particle(random(0, width), random(0, height)));
+    particleList.add(new Particle(random(10, width-10), random(10, height-10)));
   }
 
-  song.play();
+  song.loop();
+
+  attractOn = false;
 }
 
 void draw() {
+  //background(9, 22, 212);
   background(255);
+
 
   // Update physics
   box2d.step();
@@ -69,14 +71,28 @@ void draw() {
   // Update audio
   fft.forward(song.mix);
 
-  for (Particle b : particleList) {
-    b.display();
+  float sizeMult; 
+  for (int i = 0; i < numAudioBands; i++) {
+    sizeMult = fft.getAvg(i);
+
+    Particle p = particleList.get(i);
+    p.display(sizeMult);
   }
 
-  for (Particle b : particleList) {
-    b.attract(mouseX, mouseY);
+  for (Particle p : particleList) {
+    p.attract(mouseX, mouseY);
   }
 }
+
+//void mousePressed() {
+//  attractOn = true;
+
+//  if (attractOn) {
+//    for (Particle p : particleList) {
+//      p.attract(mouseX, mouseY);
+//    }
+//  }
+//}
 
 
 void keyPressed() {

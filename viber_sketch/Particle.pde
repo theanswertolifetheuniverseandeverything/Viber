@@ -5,18 +5,28 @@ class Particle {
   Body body;
   float w;
   float h;
+  float size;
+
   int r, g, b;
 
   // Constructor
-  Particle(float x, float y, float sizeMult) {
-    r = (int)random(255);
-    g = (int)random(255);
-    b = (int)random(255);
+  Particle(float x, float y) {
+    //r = (int)random(255);
+    //g = (int)random(255);
+    //b = (int)random(255);
+    
+    //rgb(230, 195, 62)
+    
+    r = 0;
+    g = 0;
+    b = 0;
+    
+    
 
-    w = random(20, 40);
-    h = w;
+    size = 10;
+
     // Add the box to the box2d world
-    makeBody(new Vec2(x, y), w, h);
+    makeBody(new Vec2(x, y), size, size);
 
     body.setUserData(this);
   }
@@ -53,11 +63,22 @@ class Particle {
 
 
   // Drawing the box
-  void display() {
+  void display(float sizeMult) {
     // We look at each body and get its screen position
     Vec2 pos = box2d.getBodyPixelCoord(body);
     // Get its angle of rotation
     float a = body.getAngle();
+
+    float newSize = sizeMult * size;
+
+    // Avoid super large particle
+    if (newSize > 50.0) {
+      newSize = 50.0;
+    }
+
+    if (newSize < 10.0) {
+      newSize = 10.0;
+    }
 
     rectMode(CENTER);
     pushMatrix();
@@ -65,7 +86,7 @@ class Particle {
     rotate(-a);
     fill(r, g, b);
     noStroke();
-    rect(0, 0, w, h);
+    ellipse(0, 0, newSize, newSize);
     popMatrix();
   }
 
